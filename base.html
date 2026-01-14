@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ title }}</title>
+  <meta name="description" content="{{ description }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/generator.js" defer></script>
+</head>
+<body>
+
+<header>
+  <h1><a href="/">Pasuwado Seisei</a></h1>
+</header>
+
+<main>
+  {% block content %}{% endblock %}
+</main>
+
+<footer>
+  <a href="/privacy.html">プライバシーポリシー</a> |
+  <a href="/about.html">運営者情報</a>
+</footer>
+
+</body>
+</html>
