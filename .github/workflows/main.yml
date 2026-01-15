@@ -26,7 +26,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Important for pushing changes back to repo
+          fetch-depth: 0 # Necessary to push changes back
 
       # 2. Set up Python
       - name: Set up Python
@@ -39,23 +39,22 @@ jobs:
         run: |
           pip install curl_cffi pycountry
 
-      # 4. Run the Scraper (This creates the date/*.json files)
+      # 4. Run the Scraper (Creates the JSON data)
       - name: Run Scraper
         run: python future_scraper.py
 
-      # 5. Run the Page Builder (This reads date/*.json and creates HTML)
+      # 5. Run the Page Builder (Creates match/, channel/, and index.html)
       - name: Build Website
         run: python main.py
 
-      # 6. Commit JSON data back to repository
-      # This ensures your 'date/' folder in GitHub is always updated
-      - name: Commit and Push Updated Data
+      # 6. Commit and Push EVERYTHING
+      # Using 'git add .' ensures match/ and channel/ folders are saved to your repo
+      - name: Commit and Push All Changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add date/*.json
-          # We use [skip ci] to prevent the action from triggering itself in a loop
-          git commit -m "Auto-update match data [skip ci]" || echo "No changes to commit"
+          git add .
+          git commit -m "Site Update: New matches and channels [skip ci]" || echo "No changes to commit"
           git push origin main || echo "No changes to push"
 
       # 7. Setup Pages
@@ -63,7 +62,6 @@ jobs:
         uses: actions/configure-pages@v4
 
       # 8. Upload the built files as an artifact
-      # We upload everything (.) including the newly generated folders
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
