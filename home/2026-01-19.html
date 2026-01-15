@@ -39,11 +39,38 @@
         <div class="max-w-4xl mx-auto flex w-full">
             
 <style>
-.weekly-nav { background: #002d56; display: flex; overflow-x: auto; scrollbar-width: none; position: sticky; top: 0; z-index: 50; }
-.weekly-nav::-webkit-scrollbar { display: none; }
-.date-btn { padding: 12px; text-align: center; color: #ccc; text-decoration: none; border-right: 1px solid #00447c; flex: 1; min-width: 90px; transition: 0.2s; }
-.date-btn:hover { background: #f90; color: #fff; }
-.date-btn.active { background: #f90 !important; color: #002d56 !important; font-weight: 800; }
+    .weekly-menu-container {
+        display: flex;
+        width: 100%;
+        gap: 4px;
+        padding: 10px 5px;
+        box-sizing: border-box;
+        justify-content: space-between;
+    }
+    .date-btn {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 2px;
+        text-decoration: none;
+        border-radius: 6px;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        min-width: 0; 
+        transition: all 0.2s;
+    }
+    .date-btn div { font-size: 9px; text-transform: uppercase; color: #64748b; font-weight: bold; }
+    .date-btn b { font-size: 10px; color: #1e293b; white-space: nowrap; }
+    .date-btn.active { background: #2563eb; border-color: #2563eb; }
+    .date-btn.active div, .date-btn.active b { color: #fff; }
+    
+    @media (max-width: 480px) {
+        .date-btn b { font-size: 8px; }
+        .date-btn div { font-size: 7px; }
+        .weekly-menu-container { gap: 2px; padding: 5px 2px; }
+    }
 </style>
 <div class="max-w-4xl mx-auto flex w-full"><a href="/home/2026-01-12.html" class="date-btn ">Mon Jan 12</a><a href="/home/2026-01-13.html" class="date-btn ">Tue Jan 13</a><a href="/home/2026-01-14.html" class="date-btn ">Wed Jan 14</a><a href="/home/2026-01-15.html" class="date-btn active">Thu Jan 15</a><a href="/home/2026-01-16.html" class="date-btn ">Fri Jan 16</a><a href="/home/2026-01-17.html" class="date-btn ">Sat Jan 17</a><a href="/home/2026-01-18.html" class="date-btn ">Sun Jan 18</a></div>
         </div>
@@ -64,7 +91,7 @@
     <main class="max-w-4xl mx-auto p-4 py-8">
         <div class="bg-white shadow-2xl rounded-lg overflow-hidden border border-slate-200">
             <div class="league-header">LaLiga</div>
-        <a href="https://yosintv.github.io/psg/match/elche-vs-sevilla/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/elche-vs-sevilla-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768852800">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768852800">20:00</div>
@@ -73,7 +100,7 @@
                 <span class="text-slate-800 font-semibold">Elche vs Sevilla</span>
             </div>
         </a><div class="league-header">Premier League</div>
-        <a href="https://yosintv.github.io/psg/match/brighton-hove-albion-vs-bournemouth/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/brighton-hove-albion-vs-bournemouth-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768852800">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768852800">20:00</div>
@@ -82,7 +109,7 @@
                 <span class="text-slate-800 font-semibold">Brighton & Hove Albion vs Bournemouth</span>
             </div>
         </a><div class="league-header">Serie A</div>
-        <a href="https://yosintv.github.io/psg/match/cremonese-vs-hellas-verona/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/cremonese-vs-hellas-verona-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768843800">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768843800">17:30</div>
@@ -91,7 +118,7 @@
                 <span class="text-slate-800 font-semibold">Cremonese vs Hellas Verona</span>
             </div>
         </a>
-        <a href="https://yosintv.github.io/psg/match/lazio-vs-como/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/lazio-vs-como-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768851900">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768851900">19:45</div>
@@ -104,7 +131,7 @@
  
 </div>
 <div class="league-header">1. Lig</div>
-        <a href="https://yosintv.github.io/psg/match/i-d-r-fk-vs-sakaryaspor/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/i-d-r-fk-vs-sakaryaspor-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768822200">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768822200">11:30</div>
@@ -113,7 +140,7 @@
                 <span class="text-slate-800 font-semibold">Iğdır FK vs Sakaryaspor</span>
             </div>
         </a>
-        <a href="https://yosintv.github.io/psg/match/i-stanbulspor-vs-ke-i-reng-c/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/i-stanbulspor-vs-ke-i-reng-c-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768831200">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768831200">14:00</div>
@@ -122,7 +149,7 @@
                 <span class="text-slate-800 font-semibold">İstanbulspor vs Keçiörengücü</span>
             </div>
         </a>
-        <a href="https://yosintv.github.io/psg/match/bodrum-fk-vs-sivasspor/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/bodrum-fk-vs-sivasspor-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768842000">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768842000">17:00</div>
@@ -131,7 +158,7 @@
                 <span class="text-slate-800 font-semibold">Bodrum FK vs Sivasspor</span>
             </div>
         </a><div class="league-header">1st Division</div>
-        <a href="https://yosintv.github.io/psg/match/omonia-aradippou-vs-enosis-neon-paralimniou/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/omonia-aradippou-vs-enosis-neon-paralimniou-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768842000">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768842000">17:00</div>
@@ -140,7 +167,7 @@
                 <span class="text-slate-800 font-semibold">Omonia Aradippou vs Enosis Neon Paralimniou</span>
             </div>
         </a><div class="league-header">Club Friendly Games</div>
-        <a href="https://yosintv.github.io/psg/match/colo-colo-vs-alianza-lima/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/colo-colo-vs-alianza-lima-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768780800">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768780800">00:00</div>
@@ -153,7 +180,7 @@
  
 </div>
 <div class="league-header">Copa Argentina</div>
-        <a href="https://yosintv.github.io/psg/match/ca-lan-s-vs-ca-sarmiento-de-la-banda/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/ca-lan-s-vs-ca-sarmiento-de-la-banda-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768781700">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768781700">00:15</div>
@@ -162,7 +189,7 @@
                 <span class="text-slate-800 font-semibold">CA Lanús vs CA Sarmiento de la Banda</span>
             </div>
         </a><div class="league-header">Eerste Divisie</div>
-        <a href="https://yosintv.github.io/psg/match/jong-ajax-vs-roda-jc-kerkrade/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/jong-ajax-vs-roda-jc-kerkrade-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768849200">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768849200">19:00</div>
@@ -171,7 +198,7 @@
                 <span class="text-slate-800 font-semibold">Jong Ajax vs Roda JC Kerkrade</span>
             </div>
         </a>
-        <a href="https://yosintv.github.io/psg/match/jong-fc-utrecht-vs-jong-psv-eindhoven/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/jong-fc-utrecht-vs-jong-psv-eindhoven-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768849200">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768849200">19:00</div>
@@ -180,7 +207,7 @@
                 <span class="text-slate-800 font-semibold">Jong FC Utrecht vs Jong PSV Eindhoven</span>
             </div>
         </a><div class="league-header">Egyptian Premier League</div>
-        <a href="https://yosintv.github.io/psg/match/tala-ea-el-gaish-vs-al-ahly-fc/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/tala-ea-el-gaish-vs-al-ahly-fc-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768834800">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768834800">15:00</div>
@@ -189,7 +216,7 @@
                 <span class="text-slate-800 font-semibold">Tala'ea El-Gaish vs Al Ahly FC</span>
             </div>
         </a>
-        <a href="https://yosintv.github.io/psg/match/national-bank-of-egypt-vs-pyramids-fc/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/national-bank-of-egypt-vs-pyramids-fc-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768845600">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768845600">18:00</div>
@@ -202,7 +229,7 @@
  
 </div>
 <div class="league-header">LaLiga 2</div>
-        <a href="https://yosintv.github.io/psg/match/granada-vs-eibar/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/granada-vs-eibar-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768851000">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768851000">19:30</div>
@@ -211,7 +238,7 @@
                 <span class="text-slate-800 font-semibold">Granada vs Eibar</span>
             </div>
         </a><div class="league-header">Liga DIMAYOR, Apertura</div>
-        <a href="https://yosintv.github.io/psg/match/independiente-santa-fe-vs-rionegro-guilas-doradas/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/independiente-santa-fe-vs-rionegro-guilas-doradas-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768786200">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768786200">01:30</div>
@@ -220,7 +247,7 @@
                 <span class="text-slate-800 font-semibold">Independiente Santa Fe vs Rionegro Águilas Doradas</span>
             </div>
         </a>
-        <a href="https://yosintv.github.io/psg/match/c-cuta-deportivo-vs-once-caldas/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/c-cuta-deportivo-vs-once-caldas-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768856400">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768856400">21:00</div>
@@ -229,7 +256,7 @@
                 <span class="text-slate-800 font-semibold">Cúcuta Deportivo vs Once Caldas</span>
             </div>
         </a><div class="league-header">Liga MX, Clausura</div>
-        <a href="https://yosintv.github.io/psg/match/cf-pachuca-vs-club-am-rica/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/cf-pachuca-vs-club-am-rica-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768784700">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768784700">01:05</div>
@@ -242,7 +269,7 @@
  
 </div>
 <div class="league-header">Liga Portugal 2</div>
-        <a href="https://yosintv.github.io/psg/match/feirense-vs-fc-porto-b/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/feirense-vs-fc-porto-b-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768845600">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768845600">18:00</div>
@@ -251,7 +278,7 @@
                 <span class="text-slate-800 font-semibold">Feirense vs FC Porto B</span>
             </div>
         </a>
-        <a href="https://yosintv.github.io/psg/match/sporting-cp-b-u21-vs-torreense/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/sporting-cp-b-u21-vs-torreense-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768845600">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768845600">18:00</div>
@@ -260,7 +287,7 @@
                 <span class="text-slate-800 font-semibold">Sporting CP B U21 vs Torreense</span>
             </div>
         </a><div class="league-header">Liga Portugal Betclic</div>
-        <a href="https://yosintv.github.io/psg/match/cf-estrela-amadora-vs-estoril-praia/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/cf-estrela-amadora-vs-estoril-praia-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768853700">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768853700">20:15</div>
@@ -269,7 +296,7 @@
                 <span class="text-slate-800 font-semibold">CF Estrela Amadora vs Estoril Praia</span>
             </div>
         </a><div class="league-header">Ligue 1</div>
-        <a href="https://yosintv.github.io/psg/match/us-monastir-vs-esp-rance-tunis/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/us-monastir-vs-esp-rance-tunis-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768827600">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768827600">13:00</div>
@@ -282,7 +309,7 @@
  
 </div>
 <div class="league-header">Ligue 2</div>
-        <a href="https://yosintv.github.io/psg/match/nancy-vs-guingamp/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/nancy-vs-guingamp-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768851900">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768851900">19:45</div>
@@ -291,7 +318,7 @@
                 <span class="text-slate-800 font-semibold">Nancy vs Guingamp</span>
             </div>
         </a><div class="league-header">Premier League</div>
-        <a href="https://yosintv.github.io/psg/match/lion-city-sailors-vs-tanjong-pagar-united/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/lion-city-sailors-vs-tanjong-pagar-united-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768822200">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768822200">11:30</div>
@@ -300,7 +327,7 @@
                 <span class="text-slate-800 font-semibold">Lion City Sailors vs Tanjong Pagar United</span>
             </div>
         </a>
-        <a href="https://yosintv.github.io/psg/match/hapoel-ironi-kiryat-shmona-vs-hapoel-haifa/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/hapoel-ironi-kiryat-shmona-vs-hapoel-haifa-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768843800">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768843800">17:30</div>
@@ -309,7 +336,7 @@
                 <span class="text-slate-800 font-semibold">Hapoel Ironi Kiryat Shmona vs Hapoel Haifa</span>
             </div>
         </a>
-        <a href="https://yosintv.github.io/psg/match/hapoel-tel-aviv-vs-hapoel-be-er-sheva/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/hapoel-tel-aviv-vs-hapoel-be-er-sheva-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768845600">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768845600">18:00</div>
@@ -318,7 +345,7 @@
                 <span class="text-slate-800 font-semibold">Hapoel Tel Aviv vs Hapoel Be'er Sheva</span>
             </div>
         </a><div class="league-header">Premiership</div>
-        <a href="https://yosintv.github.io/psg/match/mamelodi-sundowns-vs-orbit-college-fc/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/mamelodi-sundowns-vs-orbit-college-fc-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768843800">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768843800">17:30</div>
@@ -331,7 +358,7 @@
  
 </div>
 <div class="league-header">Primera División, Clausura</div>
-        <a href="https://yosintv.github.io/psg/match/guadalupe-fc-vs-municipal-liberia/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/guadalupe-fc-vs-municipal-liberia-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768780800">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768780800">00:00</div>
@@ -340,7 +367,7 @@
                 <span class="text-slate-800 font-semibold">Guadalupe FC vs Municipal Liberia</span>
             </div>
         </a>
-        <a href="https://yosintv.github.io/psg/match/san-carlos-vs-sporting-fc/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/san-carlos-vs-sporting-fc-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768784400">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768784400">01:00</div>
@@ -349,7 +376,7 @@
                 <span class="text-slate-800 font-semibold">San Carlos vs Sporting FC</span>
             </div>
         </a><div class="league-header">Pro League</div>
-        <a href="https://yosintv.github.io/psg/match/ajman-vs-al-dhafra/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/ajman-vs-al-dhafra-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768827900">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768827900">13:05</div>
@@ -358,7 +385,7 @@
                 <span class="text-slate-800 font-semibold">Ajman vs Al-Dhafra</span>
             </div>
         </a>
-        <a href="https://yosintv.github.io/psg/match/shabab-al-ahli-dubai-vs-dibba-al-fujairah/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/shabab-al-ahli-dubai-vs-dibba-al-fujairah-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768837500">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768837500">15:45</div>
@@ -367,7 +394,7 @@
                 <span class="text-slate-800 font-semibold">Shabab Al-Ahli Dubai vs Dibba Al-Fujairah</span>
             </div>
         </a><div class="league-header">Serie C, Group C</div>
-        <a href="https://yosintv.github.io/psg/match/cosenza-vs-crotone/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/cosenza-vs-crotone-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768851000">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768851000">19:30</div>
@@ -380,7 +407,7 @@
  
 </div>
 <div class="league-header">Stoiximan Super League</div>
-        <a href="https://yosintv.github.io/psg/match/gfs-panetolikos-vs-apo-levadiakos/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/gfs-panetolikos-vs-apo-levadiakos-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768838400">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768838400">16:00</div>
@@ -389,7 +416,7 @@
                 <span class="text-slate-800 font-semibold">GFS Panetolikos vs APO Levadiakos</span>
             </div>
         </a>
-        <a href="https://yosintv.github.io/psg/match/nps-volos-vs-aps-atromitos-athinon/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/nps-volos-vs-aps-atromitos-athinon-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768845600">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768845600">18:00</div>
@@ -398,7 +425,7 @@
                 <span class="text-slate-800 font-semibold">NPS Volos vs APS Atromitos Athinon</span>
             </div>
         </a><div class="league-header">Superliga</div>
-        <a href="https://yosintv.github.io/psg/match/fc-petrolul-ploie-ti-vs-universitatea-craiova/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/fc-petrolul-ploie-ti-vs-universitatea-craiova-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768845600">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768845600">18:00</div>
@@ -407,7 +434,7 @@
                 <span class="text-slate-800 font-semibold">FC Petrolul Ploiești vs Universitatea Craiova</span>
             </div>
         </a><div class="league-header">Trendyol Süper Lig</div>
-        <a href="https://yosintv.github.io/psg/match/konyaspor-vs-ey-pspor/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/konyaspor-vs-ey-pspor-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768831200">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768831200">14:00</div>
@@ -416,7 +443,7 @@
                 <span class="text-slate-800 font-semibold">Konyaspor vs Eyüpspor</span>
             </div>
         </a>
-        <a href="https://yosintv.github.io/psg/match/be-ikta-jk-vs-kayserispor/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/be-ikta-jk-vs-kayserispor-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768842000">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768842000">17:00</div>
@@ -425,7 +452,7 @@
                 <span class="text-slate-800 font-semibold">Beşiktaş JK vs Kayserispor</span>
             </div>
         </a>
-        <a href="https://yosintv.github.io/psg/match/g-ztepe-vs-aykur-rizespor/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/g-ztepe-vs-aykur-rizespor-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768842000">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768842000">17:00</div>
@@ -438,7 +465,7 @@
  
 </div>
 <div class="league-header">U23 Championship, Championship Round</div>
-        <a href="https://yosintv.github.io/psg/match/leix-es-sc-u23-vs-sc-braga-u23/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/leix-es-sc-u23-vs-sc-braga-u23-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768836600">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768836600">15:30</div>
@@ -447,7 +474,7 @@
                 <span class="text-slate-800 font-semibold">Leixões SC U23 vs SC Braga U23</span>
             </div>
         </a><div class="league-header">U23 Championship, Relegation Round</div>
-        <a href="https://yosintv.github.io/psg/match/estoril-praia-u23-vs-portimonense-u23/20260119/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/estoril-praia-u23-vs-portimonense-u23-20260119.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1768829400">19 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1768829400">13:30</div>

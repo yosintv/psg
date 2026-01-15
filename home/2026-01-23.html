@@ -39,11 +39,38 @@
         <div class="max-w-4xl mx-auto flex w-full">
             
 <style>
-.weekly-nav { background: #002d56; display: flex; overflow-x: auto; scrollbar-width: none; position: sticky; top: 0; z-index: 50; }
-.weekly-nav::-webkit-scrollbar { display: none; }
-.date-btn { padding: 12px; text-align: center; color: #ccc; text-decoration: none; border-right: 1px solid #00447c; flex: 1; min-width: 90px; transition: 0.2s; }
-.date-btn:hover { background: #f90; color: #fff; }
-.date-btn.active { background: #f90 !important; color: #002d56 !important; font-weight: 800; }
+    .weekly-menu-container {
+        display: flex;
+        width: 100%;
+        gap: 4px;
+        padding: 10px 5px;
+        box-sizing: border-box;
+        justify-content: space-between;
+    }
+    .date-btn {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 2px;
+        text-decoration: none;
+        border-radius: 6px;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        min-width: 0; 
+        transition: all 0.2s;
+    }
+    .date-btn div { font-size: 9px; text-transform: uppercase; color: #64748b; font-weight: bold; }
+    .date-btn b { font-size: 10px; color: #1e293b; white-space: nowrap; }
+    .date-btn.active { background: #2563eb; border-color: #2563eb; }
+    .date-btn.active div, .date-btn.active b { color: #fff; }
+    
+    @media (max-width: 480px) {
+        .date-btn b { font-size: 8px; }
+        .date-btn div { font-size: 7px; }
+        .weekly-menu-container { gap: 2px; padding: 5px 2px; }
+    }
 </style>
 <div class="max-w-4xl mx-auto flex w-full"><a href="/home/2026-01-12.html" class="date-btn ">Mon Jan 12</a><a href="/home/2026-01-13.html" class="date-btn ">Tue Jan 13</a><a href="/home/2026-01-14.html" class="date-btn ">Wed Jan 14</a><a href="/home/2026-01-15.html" class="date-btn active">Thu Jan 15</a><a href="/home/2026-01-16.html" class="date-btn ">Fri Jan 16</a><a href="/home/2026-01-17.html" class="date-btn ">Sat Jan 17</a><a href="/home/2026-01-18.html" class="date-btn ">Sun Jan 18</a></div>
         </div>
@@ -64,7 +91,7 @@
     <main class="max-w-4xl mx-auto p-4 py-8">
         <div class="bg-white shadow-2xl rounded-lg overflow-hidden border border-slate-200">
             <div class="league-header">A-League Men</div>
-        <a href="https://yosintv.github.io/psg/match/newcastle-jets-vs-wellington-phoenix/20260123/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/newcastle-jets-vs-wellington-phoenix-20260123.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1769157300">23 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1769157300">08:35</div>
@@ -73,7 +100,7 @@
                 <span class="text-slate-800 font-semibold">Newcastle Jets vs Wellington Phoenix</span>
             </div>
         </a><div class="league-header">A-League, Women</div>
-        <a href="https://yosintv.github.io/psg/match/brisbane-roar-vs-canberra-united/20260123/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/brisbane-roar-vs-canberra-united-20260123.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1769155200">23 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1769155200">08:00</div>
@@ -82,7 +109,7 @@
                 <span class="text-slate-800 font-semibold">Brisbane Roar vs Canberra United</span>
             </div>
         </a><div class="league-header">Carioca Série A – Taça Guanabara</div>
-        <a href="https://yosintv.github.io/psg/match/nova-igua-u-vs-fluminense/20260123/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/nova-igua-u-vs-fluminense-20260123.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1769128200">23 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1769128200">00:30</div>
@@ -95,7 +122,7 @@
  
 </div>
 <div class="league-header">Gaúcho</div>
-        <a href="https://yosintv.github.io/psg/match/ec-s-o-jos-vs-monsoon/20260123/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/ec-s-o-jos-vs-monsoon-20260123.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1769128200">23 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1769128200">00:30</div>
@@ -104,7 +131,7 @@
                 <span class="text-slate-800 font-semibold">EC São José vs Monsoon</span>
             </div>
         </a><div class="league-header">Indonesia Super League</div>
-        <a href="https://yosintv.github.io/psg/match/persis-solo-vs-borneo-fc-samarinda/20260123/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/persis-solo-vs-borneo-fc-samarinda-20260123.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1769157000">23 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1769157000">08:30</div>
@@ -113,7 +140,7 @@
                 <span class="text-slate-800 font-semibold">Persis Solo vs Borneo FC Samarinda</span>
             </div>
         </a><div class="league-header">Liga Guate Banrural, Clausura</div>
-        <a href="https://yosintv.github.io/psg/match/deportivo-guastatoya-vs-deportivo-mixco/20260123/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/deportivo-guastatoya-vs-deportivo-mixco-20260123.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1769126400">23 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1769126400">00:00</div>
@@ -126,7 +153,7 @@
  
 </div>
 <div class="league-header">Paulista Série A1</div>
-        <a href="https://yosintv.github.io/psg/match/ae-velo-clube-vs-guarani/20260123/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/ae-velo-clube-vs-guarani-20260123.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1769128200">23 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1769128200">00:30</div>
@@ -135,7 +162,7 @@
                 <span class="text-slate-800 font-semibold">AE Velo Clube vs Guarani</span>
             </div>
         </a><div class="league-header">Premier League</div>
-        <a href="https://yosintv.github.io/psg/match/i-mi-li-fk-vs-araz-nax-van/20260123/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/i-mi-li-fk-vs-araz-nax-van-20260123.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1769164200">23 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1769164200">10:30</div>
@@ -144,7 +171,7 @@
                 <span class="text-slate-800 font-semibold">İmişli FK vs Araz Naxçıvan</span>
             </div>
         </a>
-        <a href="https://yosintv.github.io/psg/match/geylang-international-vs-tampines-rovers/20260123/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/geylang-international-vs-tampines-rovers-20260123.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1769167800">23 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1769167800">11:30</div>
@@ -153,7 +180,7 @@
                 <span class="text-slate-800 font-semibold">Geylang International vs Tampines Rovers</span>
             </div>
         </a><div class="league-header">Primera División, Clausura</div>
-        <a href="https://yosintv.github.io/psg/match/municipal-liberia-vs-municipal-p-rez-zeled-n/20260123/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/municipal-liberia-vs-municipal-p-rez-zeled-n-20260123.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1769126400">23 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1769126400">00:00</div>
@@ -162,7 +189,7 @@
                 <span class="text-slate-800 font-semibold">Municipal Liberia vs Municipal Pérez Zeledón</span>
             </div>
         </a>
-        <a href="https://yosintv.github.io/psg/match/sporting-fc-vs-deportivo-saprissa/20260123/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/sporting-fc-vs-deportivo-saprissa-20260123.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1769133600">23 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1769133600">02:00</div>
@@ -175,7 +202,7 @@
  
 </div>
 <div class="league-header">Winter League, Group B</div>
-        <a href="https://yosintv.github.io/psg/match/fc-hradec-kralove-b-vs-slovan-liberec-u21/20260123/" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
+        <a href="https://yosintv.github.io/psg/match/fc-hradec-kralove-b-vs-slovan-liberec-u21-20260123.html" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
             <div class="time-box">
                 <div class="text-[10px] uppercase text-slate-400 font-bold auto-date" data-unix="1769160600">23 Jan</div>
                 <div class="font-bold text-blue-600 text-sm auto-time" data-unix="1769160600">09:30</div>
