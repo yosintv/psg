@@ -1,161 +1,199 @@
-import json, os, re, glob, time 
+import json, os, re, glob, time, tempfile, shutil
 from datetime import datetime, timedelta, timezone
 
 # --- 1. CONFIGURATION ---
-# Base domain as requested
 DOMAIN = "https://yosintv.github.io/psg"
-# Using UTC (0 offset) to ensure consistent date handling on GitHub servers
-LOCAL_OFFSET = timezone(timedelta(hours=0)) 
+# Auto-detect system timezone offset
+LOCAL_OFFSET = timezone(timedelta(seconds=-time.timezone if time.daylight == 0 else -time.altzone))
+
+# Directory management
+DIST_DIR = "."  # We write to root for GitHub Pages
+TEMP_DIR = "dist_temp"
+
+# Clean and create temp directory for the build process
+if os.path.exists(TEMP_DIR):
+    shutil.rmtree(TEMP_DIR)
+os.makedirs(TEMP_DIR, exist_ok=True)
+
 NOW = datetime.now(LOCAL_OFFSET)
 TODAY_DATE = NOW.date()
 
-# Absolute path to the repository root
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# MENU LOGIC: Today is the 4th item (3 days back, 3 days forward)
+MENU_START_DATE = TODAY_DATE - timedelta(days=3)
+TOP_LEAGUE_IDS = [17, 35, 23, 7, 8, 34, 679]
 
-# --- 2. HELPERS ---
+# --- 2. STYLING & ADS ---
+ADS_CODE = '<div class="ad-container" style="margin: 20px 0; text-align: center;"></div>'
+
+MENU_CSS = '''
+<style>
+    .weekly-menu-container {
+        display: flex; width: 100%; gap: 4px; padding: 10px 5px;
+        box-sizing: border-box; justify-content: space-between;
+    }
+    .date-btn {
+        flex: 1; display: flex; flex-direction: column; align-items: center;
+        justify-content: center; padding: 8px 2px; text-decoration: none;
+        border-radius: 6px; background: #fff; border: 1px solid #e2e8f0;
+        min-width: 0; transition: all 0.2s;
+    }
+    .date-btn div { font-size: 9px; text-transform: uppercase; color: #64748b; font-weight: bold; }
+    .date-btn b { font-size: 10px; color: #1e293b; white-space: nowrap; }
+    .date-btn.active { background: #2563eb; border-color: #2563eb; }
+    .date-btn.active div, .date-btn.active b { color: #fff; }
+    @media (max-width: 480px) {
+        .date-btn b { font-size: 8px; }
+        .date-btn div { font-size: 7px; }
+        .weekly-menu-container { gap: 2px; padding: 5px 2px; }
+    }
+</style>
+'''
+
+# --- 3. HELPERS ---
 def slugify(t):
-    """Converts names into URL-friendly strings."""
     return re.sub(r'[^a-z0-9]+', '-', str(t).lower()).strip('-')
 
-def force_write(relative_path, content):
-    """Creates any missing folders and writes the file."""
-    full_path = os.path.join(BASE_DIR, relative_path)
-    # Ensure the directory exists
+def atomic_write(path, content):
+    """Write file to the temporary directory structure."""
+    full_path = os.path.join(TEMP_DIR, path)
     os.makedirs(os.path.dirname(full_path), exist_ok=True)
     with open(full_path, 'w', encoding='utf-8') as f:
         f.write(content)
-    print(f"✅ Generated: {relative_path}")
 
-# --- 3. LOAD TEMPLATES ---
+# --- 4. LOAD TEMPLATES ---
 templates = {}
 for name in ['home', 'match', 'channel']:
-    t_path = os.path.join(BASE_DIR, f'{name}_template.html')
-    if os.path.exists(t_path):
-        with open(t_path, 'r', encoding='utf-8') as f:
-            templates[name] = f.read()
-    else:
-        # Fallback if your template file is missing or renamed
-        templates[name] = "<html><body><h1>{{PAGE_TITLE}}</h1>{{WEEKLY_MENU}}{{MATCH_LISTING}}{{BROADCAST_ROWS}}{{FAQ_COUNTRY_ROWS}}</body></html>"
-
-# --- 4. LOAD JSON DATA ---
-all_matches = []
-seen_ids = set()
-# Grabbing all JSON files from the 'date' folder
-json_files = glob.glob(os.path.join(BASE_DIR, "date", "*.json"))
-
-for f in json_files:
     try:
-        with open(f, 'r', encoding='utf-8') as j:
+        with open(f'{name}_template.html', 'r', encoding='utf-8') as f:
+            templates[name] = f.read()
+    except FileNotFoundError:
+        print(f"CRITICAL: {name}_template.html missing!")
+        templates[name] = "<html><body>{{WEEKLY_MENU}}{{MATCH_LISTING}}</body></html>"
+
+# --- 5. LOAD DATA ---
+all_matches = []
+seen_match_ids = set()
+json_files = glob.glob("date/*.json")
+for f in json_files:
+    with open(f, 'r', encoding='utf-8') as j:
+        try:
             data = json.load(j)
             if isinstance(data, dict): data = [data]
             for m in data:
-                # Ensure match has required data and avoid duplicates
-                if m.get('match_id') and m.get('kickoff') and m['match_id'] not in seen_ids:
+                mid = m.get('match_id')
+                if mid and mid not in seen_match_ids:
                     all_matches.append(m)
-                    seen_ids.add(m['match_id'])
-    except Exception as e:
-        print(f"⚠️ Error reading {f}: {e}")
+                    seen_match_ids.add(mid)
+        except: continue
 
-print(f"⚽ Found {len(all_matches)} total matches.")
-
-if not all_matches:
-    print("❌ CRITICAL ERROR: No match data found. Exiting.")
-    exit(1)
-
-# --- 5. PAGE GENERATION ---
+print(f"⚽ Loaded {len(all_matches)} matches.")
 channels_data = {}
 sitemap_urls = [DOMAIN + "/"]
 
-# 5a. GENERATE MATCH PAGES (match/slug/date/index.html)
+# --- 6. GENERATE PAGES ---
+
+# 6a. Match Pages
 for m in all_matches:
-    try:
-        dt = datetime.fromtimestamp(int(m['kickoff']), tz=timezone.utc)
-        slug = slugify(m['fixture'])
-        date_folder = dt.strftime('%Y%m%d')
-        
-        # Build Channel Broadcast Rows
-        rows = ""
-        faq_html = ""
-        for c in m.get('tv_channels', []):
-            ch_list = c['channels']
-            pills = " ".join([f'<a href="{DOMAIN}/channel/{slugify(ch)}/" class="ch-pill">{ch}</a>' for ch in ch_list])
-            rows += f'<div class="country-row"><b>{c["country"]}</b>: {pills}</div>'
-            faq_html += f'<div class="faq-item"><b>Where to watch {m["fixture"]} in {c["country"]}?</b><p>You can watch it on {", ".join(ch_list)}.</p></div>'
+    m_dt = datetime.fromtimestamp(int(m['kickoff']), tz=timezone.utc).astimezone(LOCAL_OFFSET)
+    m_slug = slugify(m['fixture'])
+    m_date_folder = m_dt.strftime('%Y%m%d')
+    
+    rows = ""
+    for c in m.get('tv_channels', []):
+        ch_links = [f'<a href="{DOMAIN}/channel/{slugify(ch)}/" class="ch-pill" style="display:inline-block; padding:2px 8px; background:#f1f5f9; border-radius:4px; margin:2px; text-decoration:none; color:#2563eb; border:1px solid #e2e8f0;">{ch}</a>' for ch in c['channels']]
+        rows += f'<div style="padding:10px; border-bottom:1px solid #eee;"><b>{c["country"]}</b>: {"".join(ch_links)}</div>'
 
-        # Inject data into match template
-        m_html = templates['match'].replace("{{FIXTURE}}", m['fixture'])
-        m_html = m_html.replace("{{BROADCAST_ROWS}}", rows)
-        m_html = m_html.replace("{{FAQ_COUNTRY_ROWS}}", faq_html)
-        m_html = m_html.replace("{{LOCAL_TIME}}", dt.strftime("%H:%M"))
-        m_html = m_html.replace("{{LOCAL_DATE}}", dt.strftime("%d %b %Y"))
-        m_html = m_html.replace("{{UNIX}}", str(m['kickoff']))
-        m_html = m_html.replace("{{DOMAIN}}", DOMAIN)
-        
-        # Save nested path
-        force_write(f"match/{slug}/{date_folder}/index.html", m_html)
-        sitemap_urls.append(f"{DOMAIN}/match/{slug}/{date_folder}/")
+    m_html = templates['match'].replace("{{FIXTURE}}", m['fixture']).replace("{{DOMAIN}}", DOMAIN)
+    m_html = m_html.replace("{{BROADCAST_ROWS}}", rows)
+    m_html = m_html.replace("{{LOCAL_DATE}}", m_dt.strftime("%d %b %Y"))
+    m_html = m_html.replace("{{LOCAL_TIME}}", m_dt.strftime("%H:%M"))
+    m_html = m_html.replace("{{UNIX}}", str(m['kickoff']))
+    
+    atomic_write(f"match/{m_slug}/{m_date_folder}/index.html", m_html)
+    sitemap_urls.append(f"{DOMAIN}/match/{m_slug}/{m_date_folder}/")
 
-        # Track channels for the channel pages
-        for c in m.get('tv_channels', []):
-            for ch in c['channels']:
-                if ch not in channels_data: channels_data[ch] = []
-                channels_data[ch].append(m)
-    except Exception as e:
-        continue
+    # Group data for Channels
+    for c in m.get('tv_channels', []):
+        for ch in c['channels']:
+            if ch not in channels_data: channels_data[ch] = []
+            channels_data[ch].append(m)
 
-# 5b. GENERATE DAILY PAGES (home/YYYY-MM-DD.html)
-# Collect all unique dates from the data
-all_days = sorted({datetime.fromtimestamp(int(m['kickoff']), tz=timezone.utc).date() for m in all_matches})
+# 6b. Daily Pages & Home Folder
+ALL_DATES = sorted({datetime.fromtimestamp(int(m['kickoff']), tz=timezone.utc).astimezone(LOCAL_OFFSET).date() for m in all_matches})
 
-# Prepare the Weekly Menu once
-menu_list = []
-for d in all_days:
-    # Pointing to the home/ folder links you requested
-    link = f"{DOMAIN}/home/{d.strftime('%Y-%m-%d')}.html"
-    menu_list.append(f'<a href="{link}" class="menu-item">{d.strftime("%b %d")}</a>')
-menu_html = " | ".join(menu_list)
+# Build Global Menu
+global_menu = f'{MENU_CSS}<div class="weekly-menu-container">'
+for j in range(7):
+    m_day = MENU_START_DATE + timedelta(days=j)
+    m_day_str = m_day.strftime('%Y-%m-%d')
+    active_class = "active" if m_day == TODAY_DATE else ""
+    # Links point to our /home/ date management folder
+    m_url = f"{DOMAIN}/home/{m_day_str}.html"
+    global_menu += f'<a href="{m_url}" class="date-btn {active_class}"><div>{m_day.strftime("%a")}</div><b>{m_day.strftime("%b %d")}</b></a>'
+global_menu += '</div>'
 
-for day in all_days:
+for day in ALL_DATES:
     day_str = day.strftime('%Y-%m-%d')
-    # Filter matches for just this specific day
-    day_matches = sorted([x for x in all_matches if datetime.fromtimestamp(int(x['kickoff']), tz=timezone.utc).date() == day], key=lambda x: x['kickoff'])
+    day_matches = [m for m in all_matches if datetime.fromtimestamp(int(m['kickoff']), tz=timezone.utc).astimezone(LOCAL_OFFSET).date() == day]
+    # Sort by League Importance then Time
+    day_matches.sort(key=lambda x: (x.get('league_id') not in TOP_LEAGUE_IDS, x.get('league', ''), x['kickoff']))
     
-    match_list_html = ""
-    for dm in day_matches:
-        d_dt = datetime.fromtimestamp(int(dm['kickoff']), tz=timezone.utc)
-        m_url = f"{DOMAIN}/match/{slugify(dm['fixture'])}/{d_dt.strftime('%Y%m%d')}/"
-        match_list_html += f'<li><span class="time">{d_dt.strftime("%H:%M")}</span> <a href="{m_url}">{dm["fixture"]}</a></li>'
+    listing_html, last_league = "", ""
+    for m in day_matches:
+        league = m.get('league', 'Other Football')
+        if league != last_league:
+            listing_html += f'<div class="league-header" style="background:#f8fafc; padding:8px; font-weight:bold; border-bottom:2px solid #2563eb;">{league}</div>'
+            last_league = league
+        
+        dt_m = datetime.fromtimestamp(int(m['kickoff']), tz=timezone.utc).astimezone(LOCAL_OFFSET)
+        m_url = f"{DOMAIN}/match/{slugify(m['fixture'])}/{dt_m.strftime('%Y%m%d')}/"
+        listing_html += f'''
+        <a href="{m_url}" style="display:flex; align-items:center; padding:12px; border-bottom:1px solid #f1f5f9; text-decoration:none; color:inherit; background:#fff;">
+            <div style="min-width:60px; font-weight:bold; color:#2563eb;">{dt_m.strftime('%H:%M')}</div>
+            <div style="flex:1; font-weight:500;">{m['fixture']}</div>
+        </a>'''
+
+    h_output = templates['home'].replace("{{MATCH_LISTING}}", listing_html).replace("{{WEEKLY_MENU}}", global_menu)
+    h_output = h_output.replace("{{DOMAIN}}", DOMAIN).replace("{{PAGE_TITLE}}", f"Football on TV - {day_str}")
     
-    # Inject data into home template
-    h_html = templates['home'].replace("{{MATCH_LISTING}}", f"<ul>{match_list_html}</ul>").replace("{{WEEKLY_MENU}}", menu_html)
-    h_html = h_html.replace("{{DOMAIN}}", DOMAIN).replace("{{PAGE_TITLE}}", f"Schedule for {day_str}")
-    
-    # Write to home/ folder as requested
-    force_write(f"home/{day_str}.html", h_html)
+    # Save to home/ folder
+    atomic_write(f"home/{day_str}.html", h_output)
     sitemap_urls.append(f"{DOMAIN}/home/{day_str}.html")
-
-    # Mirror today's file to index.html at the root for the landing page
+    # If today, save as index.html
     if day == TODAY_DATE:
-        force_write("index.html", h_html)
+        atomic_write("index.html", h_output)
 
-# 5c. GENERATE CHANNEL PAGES (channel/slug/index.html)
-for ch_name, m_list in channels_data.items():
+# 6c. Channel Pages
+for ch_name, matches in channels_data.items():
     c_slug = slugify(ch_name)
-    # Sort matches for this channel by time
-    c_list_html = ""
-    for mx in sorted(m_list, key=lambda x: x['kickoff']):
-        mx_dt = datetime.fromtimestamp(int(mx['kickoff']), tz=timezone.utc)
-        c_list_html += f'<li><a href="{DOMAIN}/match/{slugify(mx["fixture"])}/{mx_dt.strftime("%Y%m%d")}/">{mx["fixture"]}</a> ({mx_dt.strftime("%d %b")})</li>'
+    c_list = ""
+    matches.sort(key=lambda x: x['kickoff'])
+    for m in matches:
+        dt_m = datetime.fromtimestamp(int(m['kickoff']), tz=timezone.utc).astimezone(LOCAL_OFFSET)
+        m_url = f"{DOMAIN}/match/{slugify(m['fixture'])}/{dt_m.strftime('%Y%m%d')}/"
+        c_list += f'<a href="{m_url}" style="display:block; padding:10px; border-bottom:1px solid #eee; text-decoration:none; color:#333;"><b>{dt_m.strftime("%d %b %H:%M")}</b> - {m["fixture"]}</a>'
     
-    c_html = templates['channel'].replace("{{CHANNEL_NAME}}", ch_name).replace("{{MATCH_LISTING}}", f"<ul>{c_list_html}</ul>").replace("{{DOMAIN}}", DOMAIN)
-    force_write(f"channel/{c_slug}/index.html", c_html)
+    c_html = templates['channel'].replace("{{CHANNEL_NAME}}", ch_name).replace("{{MATCH_LISTING}}", c_list).replace("{{WEEKLY_MENU}}", global_menu).replace("{{DOMAIN}}", DOMAIN)
+    atomic_write(f"channel/{c_slug}/index.html", c_html)
     sitemap_urls.append(f"{DOMAIN}/channel/{c_slug}/")
 
-# 5d. GENERATE SITEMAP.XML
+# 6d. Sitemap
 sitemap = '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
 for url in sorted(set(sitemap_urls)):
-    sitemap += f'<url><loc>{url}</loc></url>'
+    sitemap += f'<url><loc>{url}</loc><lastmod>{NOW.strftime("%Y-%m-%d")}</lastmod></url>'
 sitemap += '</urlset>'
-force_write("sitemap.xml", sitemap)
+atomic_write("sitemap.xml", sitemap)
 
-print("🏁 ALL PAGES GENERATED SUCCESSFULLY IN ROOT, MATCH/, CHANNEL/, AND HOME/ FOLDERS.")
+# --- 7. DEPLOYMENT ---
+print("📦 Build complete. Moving files to root...")
+# In GitHub Actions, we move from TEMP_DIR to root
+for root, dirs, files in os.walk(TEMP_DIR):
+    for file in files:
+        src = os.path.join(root, file)
+        rel_path = os.path.relpath(src, TEMP_DIR)
+        dest = os.path.join(BASE_DIR, rel_path)
+        os.makedirs(os.path.dirname(dest), exist_ok=True)
+        shutil.move(src, dest)
+
+shutil.rmtree(TEMP_DIR)
+print("🏁 DONE. All folders created and CSS applied.")
