@@ -10,7 +10,7 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     
-    # REQUIRED permissions for GitHub Pages deployment
+    # REQUIRED permissions for GitHub Pages deployment and committing data
     permissions:
       contents: write
       pages: write
@@ -25,6 +25,8 @@ jobs:
       # 1. Checkout your repository
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Important for pushing changes back to repo
 
       # 2. Set up Python
       - name: Set up Python
@@ -37,29 +39,31 @@ jobs:
         run: |
           pip install curl_cffi pycountry
 
-      # 4. Run the Scraper
+      # 4. Run the Scraper (This creates the date/*.json files)
       - name: Run Scraper
         run: python future_scraper.py
 
-      # 5. Run the Page Builder
+      # 5. Run the Page Builder (This reads date/*.json and creates HTML)
       - name: Build Website
         run: python main.py
 
-      # 6. Commit JSON data (Optional but helpful)
-      # This saves the scraped JSON back to your 'date/' folder
-      - name: Commit Updated Data
+      # 6. Commit JSON data back to repository
+      # This ensures your 'date/' folder in GitHub is always updated
+      - name: Commit and Push Updated Data
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add date/*.json
-          git commit -m "Update match data [skip ci]" || echo "No changes to commit"
-          git push || echo "No changes to push"
+          # We use [skip ci] to prevent the action from triggering itself in a loop
+          git commit -m "Auto-update match data [skip ci]" || echo "No changes to commit"
+          git push origin main || echo "No changes to push"
 
       # 7. Setup Pages
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
       # 8. Upload the built files as an artifact
+      # We upload everything (.) including the newly generated folders
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
