@@ -129,7 +129,7 @@ sitemap_urls = [DOMAIN + "/"]
 
 # --- 5. WEEKLY MENU FOR HOME PAGES ---
 def build_weekly_menu():
-    html = MENU_CSS + '<div class="max-w-4xl mx-auto flex w-full">'
+    html = MENU_CSS + '<div class="weekly-menu-container">'
     for i in range(7):
         d = MENU_START_DATE + timedelta(days=i)
         d_str = d.strftime('%Y-%m-%d')
