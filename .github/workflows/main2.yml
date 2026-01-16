@@ -2,68 +2,79 @@ name: Daily Build & Deploy
 
 on:
   schedule:
-    # Runs every day at 00:00 UTC
     - cron: '0 */6 * * *'
-  workflow_dispatch: # Allows manual run
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
-    # REQUIRED permissions for GitHub Pages deployment and committing data
     permissions:
       contents: write
       pages: write
       id-token: write
 
-    # Deployment environment
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      # 1. Checkout your repository
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Necessary to push changes back
+          fetch-depth: 0
 
-      # 2. Set up Python
+      - name: Debug Input Files
+        run: |
+          echo "📁 Templates found: $(ls -la *_template.html 2>/dev/null || echo 'NONE')"
+          echo "📁 date/*.json: $(find date/ -name '*.json' 2>/dev/null | wc -l || echo 0)"
+          echo "⚽ Matches expected: $(find date/ -name '*.json' 2>/dev/null | wc -l)"
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      # 3. Install Dependencies
       - name: Install Libraries
-        run: |
-          pip install curl_cffi pycountry
+        run: pip install curl_cffi pycountry
 
-      # 5. Run the Page Builder (Creates match/, channel/, and index.html)
       - name: Build Website
-        run: python main.py
+        run: |
+          echo "🔨 Running main.py..."
+          python main.py
+          echo "✅ main.py completed (check output above for 'Matches Loaded: X')"
 
-      # 6. Commit and Push EVERYTHING
-      # Using 'git add .' ensures match/ and channel/ folders are saved to your repo
-      - name: Commit and Push All Changes
+      - name: Verify Generated Files
+        run: |
+          echo "📊 OUTPUT CHECK:"
+          test -f index.html && echo "✅ index.html: $(wc -l < index.html) lines" || echo "❌ index.html MISSING"
+          echo "home/: $(ls home/ 2>/dev/null | wc -l || echo 0) files"
+          echo "match/: $(ls match/ 2>/dev/null | wc -l || echo 0) files" 
+          echo "channel/: $(ls channel/ 2>/dev/null | wc -l || echo 0) files"
+
+      - name: Commit and Push Changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add .
-          git commit -m "Site Update: New matches and channels [skip ci]" || echo "No changes to commit"
-          git push origin main || echo "No changes to push"
+          
+          # FIXED: index.html not index.xml + better fallback
+          git add index.html sitemap.xml home/ match/ channel/ date/ 2>/dev/null || git add .
+          
+          if git diff --staged --quiet; then
+            echo "⚠️  No changes detected (main.py found 0 matches?)"
+          else
+            git commit -m "🤖 Site Update: $(ls home/ match/ channel/ -1 2>/dev/null | wc -l || echo 0) pages [skip ci]"
+            git push origin main
+            echo "✅ Pushed changes"
+          fi
 
-      # 7. Setup Pages
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
-      # 8. Upload the built files as an artifact
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
 
-      # 9. Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
