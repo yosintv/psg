@@ -301,7 +301,7 @@ for ch_name, match_dict in channels_data.items():
 
 # 6d. SITEMAP
 sitemap = '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
-for url in sorted(set(sitemap_urls)):
+for url in sorted(list(set(sitemap_urls))):
     sitemap += f'<url><loc>{url}</loc><lastmod>{NOW.strftime("%Y-%m-%d")}</lastmod></url>'
 sitemap += '</urlset>'
 atomic_write("sitemap.xml", sitemap)
