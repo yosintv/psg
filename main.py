@@ -161,9 +161,11 @@ for m in all_matches:
             country_counter += 1
             ch_links = [f'<a href="{DOMAIN}/channel/{slugify(ch)}.html" style="display: inline-block; background: #f1f5f9; color: #2563eb; padding: 2px 8px; border-radius: 4px; margin: 2px; text-decoration: none; font-weight: 600; border: 1px solid #e2e8f0;">{ch}</a>' for ch in c['channels']]
             rows += f'''
-            <div class="broadcast-row">
-                <div style="font-weight: 800; color: #475569; font-size: 13px; min-width: 100px;">{c["country"]}</div>
-                <div style="display: flex; flex-wrap: wrap; gap: 4px;">{" ".join(ch_links)}</div>
+        <div class="broadcast-row">
+            <div style="display: flex; align-items: flex-start; padding: 12px; border-bottom: 1px solid #edf2f7; background: #fff;">
+            <div style="flex: 0 0 100px; font-weight: 800; color: #475569; font-size: 13px; padding-top: 4px;">{c["country"]}</div>
+            <div style="flex: 1; display: flex; flex-wrap: wrap; gap: 4px;">{" ".join(ch_links)}</div>
+        </div>
             </div>'''
             if country_counter % 10 == 0: rows += ADS_CODE
 
