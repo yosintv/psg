@@ -1,58 +1,73 @@
-name: Daily Build & Deploy - 2
+name: Daily Build & Deploy
 
 on:
   schedule:
+    # Runs every day at 00:00 UTC
     - cron: '0 */6 * * *'
-  workflow_dispatch:
+  workflow_dispatch: # Allows manual run
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    
+    # REQUIRED permissions for GitHub Pages deployment and committing data
     permissions:
       contents: write
       pages: write
       id-token: write
 
+    # Deployment environment
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
+      # 1. Checkout your repository
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # Necessary to push changes back
 
+      # 2. Set up Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
+      # 3. Install Dependencies
       - name: Install Libraries
-        run: pip install curl_cffi pycountry
+        run: |
+          pip install curl_cffi pycountry
 
+      # 4. Run the Scraper (Creates the JSON data)
       - name: Run Scraper
         run: python future_scraper.py
 
+      # 5. Run the Page Builder (Creates match/, channel/, and index.html)
       - name: Build Website
         run: python main.py
 
-      - name: Commit and Push Changes
+      # 6. Commit and Push EVERYTHING
+      # Using 'git add .' ensures match/ and channel/ folders are saved to your repo
+      - name: Commit and Push All Changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add index.xml sitemap.xml home/ match/ channel/ date/ 2>/dev/null || git add .
-          git commit -m "Automated Site Update [skip ci]" || echo "No changes to commit"
+          git add .
+          git commit -m "Site Update: New matches and channels [skip ci]" || echo "No changes to commit"
           git push origin main || echo "No changes to push"
 
+      # 7. Setup Pages
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
+      # 8. Upload the built files as an artifact
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
 
+      # 9. Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
