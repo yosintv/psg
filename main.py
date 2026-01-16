@@ -4,19 +4,21 @@ from datetime import datetime, timedelta, timezone
 # --- 1. CONFIGURATION ---
 DOMAIN = "https://tv.singhyogendra.com.np"
 
-# Auto-detect system timezone offset
-LOCAL_OFFSET = timezone(
-    timedelta(seconds=-time.timezone if time.daylight == 0 else -time.altzone)
-)
+# FIX: Hardcode the Timezone to Nepal (UTC+5:45). 
+# GitHub Actions runners always use UTC. Without this, your "Today" 
+# will be 5 hours and 45 minutes behind, causing index.html to show yesterday's matches.
+LOCAL_OFFSET = timezone(timedelta(hours=5, minutes=45))
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+# Get current time in the target timezone
 NOW = datetime.now(LOCAL_OFFSET)
 TODAY_DATE = NOW.date()
 
-# Weekly menu center logic: today is the 4th item (3 days back, 3 days forward)
+# Weekly menu logic: fixed window (3 days back, today, 3 days forward)
+# This ensures index.html is ALWAYS part of the generation cycle.
 MENU_START_DATE = TODAY_DATE - timedelta(days=3)
-MENU_END_DATE = TODAY_DATE + timedelta(days=3)
+TARGET_DATES = [MENU_START_DATE + timedelta(days=i) for i in range(7)]
 
 # Top leagues used for ordering on daily pages
 TOP_LEAGUE_IDS = [17, 35, 23, 7, 8, 34, 679]
@@ -24,7 +26,8 @@ TOP_LEAGUE_IDS = [17, 35, 23, 7, 8, 34, 679]
 # Google Ads placeholder block
 ADS_CODE = '''
 <div class="ad-container" style="margin: 20px 0; text-align: center;">
-    </div>
+    
+</div>
 '''
 
 # Home template CSS for weekly menu
@@ -81,30 +84,29 @@ def atomic_write(relative_path, content):
         with os.fdopen(fd, 'w', encoding='utf-8') as f:
             f.write(content)
         os.replace(tmp_path, full_path)
-    except Exception:
+    except Exception as e:
         if os.path.exists(tmp_path):
             os.unlink(tmp_path)
-        raise
+        raise e
 
 def build_weekly_menu(current_page_date):
-    """Generates menu HTML with dynamic 'active' state for the page being viewed."""
+    """Generates menu HTML, highlighting the button for the date being viewed."""
     html = MENU_CSS + '<div class="weekly-menu-container">'
-    for i in range(7):
-        d = MENU_START_DATE + timedelta(days=i)
+    for d in TARGET_DATES:
         d_str = d.strftime('%Y-%m-%d')
-        # Link logic: Today points to root, others point to home/ folder
+        # Link logic: Today points to root /, others to /home/
         link = f"{DOMAIN}/" if d == TODAY_DATE else f"{DOMAIN}/home/{d_str}.html"
-        active = "active" if d == current_page_date else ""
+        active_class = "active" if d == current_page_date else ""
         
         html += f'''
-        <a href="{link}" class="date-btn {active}">
+        <a href="{link}" class="date-btn {active_class}">
             <div>{d.strftime("%a")}</div>
             <b>{d.strftime("%b %d")}</b>
         </a>'''
     html += '</div>'
     return html
 
-# Clean existing folders
+# Clean folders to avoid stale files
 for folder in ['home', 'match', 'channel']:
     folder_path = os.path.join(BASE_DIR, folder)
     if os.path.exists(folder_path):
@@ -139,13 +141,13 @@ for f in json_files:
         except Exception:
             continue
 
-print(f"⚽ Matches loaded: {len(all_matches)}")
+print(f"⚽ Matches Loaded: {len(all_matches)}")
 channels_data = {}
 sitemap_urls = [DOMAIN + "/"]
 
 # --- 5. PAGE GENERATION ---
 
-# 5a. MATCH PAGES → match/slug-YYYYMMDD.html
+# 5a. MATCH PAGES
 for m in all_matches:
     try:
         m_dt = datetime.fromtimestamp(int(m['kickoff']), tz=timezone.utc).astimezone(LOCAL_OFFSET)
@@ -179,7 +181,6 @@ for m in all_matches:
         atomic_write(f"match/{match_filename}", m_html)
         sitemap_urls.append(f"{DOMAIN}/match/{match_filename}")
 
-        # Channel data collection
         for c in m.get('tv_channels', []):
             for ch in c['channels']:
                 if ch not in channels_data: channels_data[ch] = {}
@@ -187,14 +188,13 @@ for m in all_matches:
     except Exception:
         continue
 
-# 5b. HOME PAGES → home/YYYY-MM-DD.html & index.html
-# We loop through the full 7-day range to ensure pages exist even if no matches found
-TARGET_DATES = [MENU_START_DATE + timedelta(days=i) for i in range(7)]
-
+# 5b. HOME PAGES & INDEX.HTML (FIXED RE-GENERATION)
+# This loop now iterates through TARGET_DATES, ensuring files are ALWAYS created.
 for day in TARGET_DATES:
     day_str = day.strftime('%Y-%m-%d')
     current_path = "/" if day == TODAY_DATE else f"/home/{day_str}.html"
 
+    # Find matches for this specific day
     day_matches = [m for m in all_matches if 
         datetime.fromtimestamp(int(m['kickoff']), tz=timezone.utc).astimezone(LOCAL_OFFSET).date() == day]
     
@@ -202,7 +202,7 @@ for day in TARGET_DATES:
 
     listing_html = ""
     if not day_matches:
-        listing_html = '<div style="text-align:center; padding:40px; color:#64748b;">No matches scheduled for this date.</div>'
+        listing_html = '<div style="text-align:center; padding:40px; color:#64748b;">No matches scheduled for this date. Check back later!</div>'
     else:
         last_league = ""
         league_counter = 0
@@ -217,6 +217,7 @@ for day in TARGET_DATES:
 
             dt_m = datetime.fromtimestamp(int(m['kickoff']), tz=timezone.utc).astimezone(LOCAL_OFFSET)
             m_url = f"{DOMAIN}/match/{slugify(m['fixture'])}-{dt_m.strftime('%Y%m%d')}.html"
+            
             listing_html += f'''
             <a href="{m_url}" class="match-row flex items-center p-4 hover:bg-slate-50 transition-all">
                 <div class="time-box">
@@ -236,11 +237,14 @@ for day in TARGET_DATES:
                                 .replace("{{PAGE_TITLE}}", f"TV Channels For {day.strftime('%A, %b %d, %Y')}") \
                                 .replace("{{CURRENT_PATH}}", current_path)
 
+    # WRITE TO HOME FOLDER
     atomic_write(f"home/{day_str}.html", h_output)
     sitemap_urls.append(f"{DOMAIN}/home/{day_str}.html")
+    
+    # WRITE TO ROOT (INDEX.HTML)
     if day == TODAY_DATE:
         atomic_write("index.html", h_output)
-        print(f"✅ Updated index.html for {day_str}")
+        print(f"✅ index.html and home/{day_str}.html successfully updated for Today.")
 
 # 5c. CHANNEL PAGES
 for ch_name, match_dict in channels_data.items():
@@ -276,4 +280,4 @@ for url in sorted(list(set(sitemap_urls))):
 sitemap += '</urlset>'
 atomic_write("sitemap.xml", sitemap)
 
-print("🏁 Perfect! Website generated with flat structure and updated home dates.")
+print("🏁 Deployment Ready: index.html and home/ files are generated.")
