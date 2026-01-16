@@ -30,35 +30,27 @@ ADS_CODE = '''
 </div>
 '''
 
-# Home template CSS for weekly menu
+# Home template CSS for weekly menu - FIXED ACTIVE STATE
 MENU_CSS = '''
 <style>
     .weekly-menu-container {
-        display: flex;
-        width: 100%;
-        gap: 4px;
-        padding: 10px 5px;
-        box-sizing: border-box;
-        justify-content: space-between;
+        display: flex; width: 100%; gap: 4px; padding: 10px 5px;
+        box-sizing: border-box; justify-content: space-between;
     }
     .date-btn {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 8px 2px;
-        text-decoration: none;
-        border-radius: 6px;
-        background: #fff;
-        border: 1px solid #e2e8f0;
-        min-width: 0; 
-        transition: all 0.2s;
+        flex: 1; display: flex; flex-direction: column; align-items: center;
+        justify-content: center; padding: 8px 2px; text-decoration: none;
+        border-radius: 6px; background: #fff; border: 1px solid #e2e8f0;
+        min-width: 0; transition: all 0.2s; color: inherit;
     }
     .date-btn div { font-size: 9px; text-transform: uppercase; color: #64748b; font-weight: bold; }
     .date-btn b { font-size: 10px; color: #1e293b; white-space: nowrap; }
-    .date-btn.active { background: #2563eb; border-color: #2563eb; }
-    .date-btn.active div, .date-btn.active b { color: #fff; }
+    
+    /* STRONGER active state - overrides template CSS */
+    .date-btn.active, .date-btn.active:link, .date-btn.active:visited, .date-btn.active:hover {
+        background: #2563eb !important; border-color: #2563eb !important;
+    }
+    .date-btn.active div, .date-btn.active b { color: #fff !important; }
     
     @media (max-width: 480px) {
         .date-btn b { font-size: 8px; }
@@ -97,6 +89,10 @@ def build_weekly_menu(current_page_date):
         # Link logic: Today points to root /, others to /home/
         link = f"{DOMAIN}/" if d == TODAY_DATE else f"{DOMAIN}/home/{d_str}.html"
         active_class = "active" if d == current_page_date else ""
+        
+        # DEBUG: Print which date is active
+        if active_class:
+            print(f"✅ ACTIVE DATE: {d.strftime('%Y-%m-%d')} ({d.strftime('%A')})")
         
         html += f'''
         <a href="{link}" class="date-btn {active_class}">
