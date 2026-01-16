@@ -2,14 +2,12 @@ name: Daily Build & Deploy
 
 on:
   schedule:
-    # Runs every 6 hours
     - cron: '0 */6 * * *'
-  workflow_dispatch: # Allows manual run
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
     permissions:
       contents: write
       pages: write
@@ -20,64 +18,57 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      # 1. Checkout your repository
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # 2. Set up Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      # 3. Install Dependencies
       - name: Install Libraries
-        run: |
-          pip install curl_cffi pycountry
+        run: pip install curl_cffi pycountry
 
-      # 4. Ensure directories exist before running scripts
-      - name: Prepare Workspace
-        run: mkdir -p home match channel date
-
-      # 5. Run the Scraper (Creates the JSON data)
       - name: Run Scraper
         run: python future_scraper.py
 
-      # 6. Run the Page Builder (Creates index.html and folders)
       - name: Build Website
         run: python main.py
 
-      # 7. Commit and Push ALL Changes
-      # This ensures the home/ folder and index.html are specifically updated
+      # This step ensures the folders actually exist and contain files before we try to commit.
+      # It helps GitHub's runner "index" the new file system state.
+      - name: Verify Generated Files
+        run: |
+          echo "Checking generated folders..."
+          ls -R home/ match/ channel/ date/ || echo "Some folders are missing!"
+
       - name: Commit and Push Changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           
-          # Add all critical generated files and folders
-          git add index.html sitemap.xml home/ match/ channel/ date/
+          # 'git add -A' is the secret. It catches the folders your script 
+          # deleted (rmtree) and the ones it recreated.
+          git add -A
           
-          # Check if there are changes to commit so the build doesn't fail
+          # Only commit if there are actually changes to avoid workflow errors
           if [ -n "$(git status --porcelain)" ]; then
-            git commit -m "Site Update: Syncing home/ and index.html [skip ci]"
+            git commit -m "Site Update: Re-generated all 4 folders and index [skip ci]"
             git push origin main
           else
-            echo "No changes detected in home/ or index.html"
+            echo "No changes detected."
           fi
 
-      # 8. Setup Pages
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
-      # 9. Upload the built files as an artifact
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
 
-      # 10. Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
