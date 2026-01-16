@@ -2,7 +2,7 @@ import json, os, re, glob, time, shutil, tempfile
 from datetime import datetime, timedelta, timezone
 
 # --- 1. CONFIGURATION ---
-DOMAIN = "https://tv.singhyogendra.com.np"
+DOMAIN = "https://tv.cricfoot.net"
 
 # FIX: Hardcode the Timezone to Nepal (UTC+5:45). 
 # GitHub Actions runners always use UTC. Without this, your "Today" 
