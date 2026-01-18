@@ -1,69 +1,25 @@
 <!DOCTYPE html>
 <html lang="en"> 
 <head>
+    <meta http-equiv="refresh" content="0; url=/">
     <meta charset="UTF-8">  
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maintenance Mode | CricFoot</title>
+    <title>Redirecting | CricFoot</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-    </style>
+    <script>
+        // Immediate JavaScript Redirect
+        window.location.href = "/";
+    </script>
 </head>
 <body class="bg-slate-100 flex items-center justify-center min-h-screen">
-    <div class="text-center p-8 bg-white shadow-xl rounded-2xl max-w-md border border-slate-200 mx-4">
-        <div class="text-6xl mb-4 animate-pulse">🛠️</div>
+    <div class="text-center p-8 bg-white shadow-xl rounded-2xl max-w-md border border-slate-200">
+        <div class="text-6xl mb-4 animate-spin">⏳</div>
+        <h1 class="text-2xl font-bold text-slate-800 mb-2">Redirecting...</h1>
+        <p class="text-slate-500 mb-6">If you are not redirected automatically, please click the button below.</p>
         
-        <h1 class="text-2xl font-bold text-slate-800 mb-2">Under Maintenance</h1>
-        <p class="text-slate-500 mb-6">We're updating the pitch for the next big match. We'll be back online shortly!</p>
-        
-        <div class="bg-slate-50 border border-slate-100 rounded-lg py-4 mb-6">
-            <span class="block text-sm uppercase tracking-widest text-slate-400 font-bold mb-1">Back In</span>
-            <div id="countdown" class="text-4xl font-mono font-bold text-blue-600">00:00</div>
-        </div>
-
-        <div class="w-full bg-slate-200 rounded-full h-1.5 mb-8 overflow-hidden">
-            <div id="progress-bar" class="bg-blue-600 h-1.5 rounded-full transition-all duration-1000 ease-linear" style="width: 0%"></div>
-        </div>
-
-        <a href="/" class="inline-block w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors duration-200 mb-6 shadow-lg shadow-blue-100">
+        <a href="/" class="inline-block w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors shadow-lg">
             Back to Home
         </a>
-        
-        <p class="text-xs text-slate-400">Thank you for your patience.</p>
     </div>
-
-    <script>
-        // Total duration set to 0 for immediate redirection
-        const totalTime = 0; 
-        let timeLeft = totalTime;
-
-        const countdownElement = document.getElementById('countdown');
-        const progressBar = document.getElementById('progress-bar');
-
-        const updateUI = () => {
-            if (timeLeft <= 0) {
-                // Ensure the visual elements reflect the zero state immediately
-                countdownElement.innerText = "Redirecting...";
-                progressBar.style.width = `0%`;
-                
-                // Clear any existing intervals and trigger the navigation
-                if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
-                window.location.href = "/";
-            } else {
-                const minutes = Math.floor(timeLeft / 60);
-                const seconds = timeLeft % 60;
-                countdownElement.innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-                progressBar.style.width = `${(timeLeft / totalTime) * 100}%`;
-                timeLeft--;
-            }
-        };
-
-        // Execute immediately upon script loading
-        updateUI(); 
-
-        // Interval is defined but will likely be cleared instantly if timeLeft is 0
-        const timerInterval = setInterval(updateUI, 1000);
-    </script>
 </body>
 </html>
