@@ -41,7 +41,7 @@ jobs:
         run: |
           # Add unique timestamp to ensure Git detects change
           TIMESTAMP=$(date -u +%Y%m%d%H%M%S)
-          sed -i "s|||" index.html 2>/dev/null || echo "" >> index.html
+          sed -i "s|<!-- BUILD -->|<!-- BUILD $TIMESTAMP -->|" index.html 2>/dev/null || echo "<!-- BUILD $TIMESTAMP -->" >> index.html
           echo "✅ index.html timestamp updated: $TIMESTAMP"
 
       - name: Commit and Push Changes
@@ -49,17 +49,15 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           
-          # Explicitly include the pt/ folder along with other standard directories
-          git add index.html sitemap.xml home/* match/* channel/* pt/* 2>/dev/null || git add .
+          # Always include index.html first + all folders
+          git add index.html sitemap.xml home/* match/* channel/* 2>/dev/null || git add .
           
           if git diff --staged --quiet; then
             echo "⚠️ No changes detected"
           else
-            # Count includes the new pt/ folder to show total pages in the commit message
-            TOTAL_PAGES=$(find home/ match/ channel/ pt/ -name '*.html' 2>/dev/null | wc -l | xargs)
-            git commit -m "🤖 Update: index.html + $TOTAL_PAGES pages [skip ci]"
+            git commit -m "🤖 Update: index.html + $(find home/ match/ channel/ -name '*.html' 2>/dev/null | wc -l | xargs) pages [skip ci]"
             git push origin main
-            echo "✅ ALL FILES PUSHED including index.html and pt/ folder content"
+            echo "✅ ALL FILES PUSHED including index.html"
           fi
 
       - name: Setup Pages
